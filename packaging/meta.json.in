@@ -1,0 +1,16 @@
+{
+  "category": "General",
+  "changelog": "@CHANGELOG@",
+  "description": "A living-room home screen for Jellyfin: hero banner, Theater Mode, Top 10, Picks, seasonal themes and a full-size sign-in screen. Every row respects each user's library access. Not affiliated with the Jellyfin project.",
+  "guid": "9cd3e1ec-177d-47d7-8b07-7ec96b361d2d",
+  "name": "Jelly Cinema",
+  "overview": "Living-room home screen for Jellyfin",
+  "owner": "TechSystems23",
+  "targetAbi": "12.1.0.0",
+  "timestamp": "@TIMESTAMP@",
+  "version": "@VERSION@",
+  "status": "Active",
+  "autoUpdate": false,
+  "imagePath": "jellycinema.jpg",
+  "assemblies": [ "Jellyfin.Plugin.JellyCinema.dll" ]
+}

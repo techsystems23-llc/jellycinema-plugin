@@ -1,0 +1,9 @@
+bin/
+obj/
+*.user
+.vs/
+*.bak-*
+plugin/Jellyfin.Plugin.JellyCinema/out/
+dist/
+tests/node_modules/
+tests/.work/

@@ -1,0 +1,29 @@
+Jelly Cinema - third-party notices
+==================================
+
+Jelly Cinema is (c) TechSystems23 LLC and licensed under the GNU General Public License v3.0 (LICENSE).
+Complete source code: https://github.com/techsystems23-llc/jellycinema-plugin
+
+It includes the following works by others, under their own licenses:
+
+1. Oswald font (oswald-600.woff2)
+   Copyright 2016 The Oswald Project Authors (https://github.com/googlefonts/OswaldFont)
+   SIL Open Font License 1.1 - full text in plugin/Jellyfin.Plugin.JellyCinema/Web/fonts/OFL-Oswald.txt
+
+2. Archivo Black font (archivo-black-400.woff2)
+   Copyright 2017 The Archivo Black Project Authors (https://github.com/Omnibus-Type/ArchivoBlack)
+   SIL Open Font License 1.1 - full text in plugin/Jellyfin.Plugin.JellyCinema/Web/fonts/OFL-ArchivoBlack.txt
+
+3. Popcorn logo and icons, based on Fluent Emoji "Popcorn" (recolored)
+   Copyright (c) Microsoft Corporation (https://github.com/microsoft/fluentui-emoji)
+   MIT License - full text in plugin/Jellyfin.Plugin.JellyCinema/Web/icons/LICENSE-icons.txt
+
+4. Jellyfin libraries the plugin is built against (Jellyfin.Controller, Jellyfin.Model)
+   Copyright (c) Jellyfin contributors (https://github.com/jellyfin/jellyfin) - GNU GPL v3.0
+   Not included in the download; Jellyfin provides them at run time.
+
+Screenshots in docs/screenshots show public-domain films from the Internet Archive (https://archive.org),
+with posters and backgrounds made from frames of those films.
+
+Jellyfin is a trademark of Jellyfin, Inc. Jelly Cinema is not affiliated with or endorsed by the Jellyfin project.
+YouTube is a trademark of Google LLC; trailers are shown with YouTube's embedded player.

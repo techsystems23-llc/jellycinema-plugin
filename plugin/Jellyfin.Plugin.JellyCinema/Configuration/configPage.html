@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Jelly Cinema</title>
+</head>
+<body>
+<div id="jcConfigPage" data-role="page" class="page type-interior pluginConfigurationPage" data-require="emby-input,emby-button,emby-select,emby-checkbox,emby-textarea">
+<style>
+  #jcConfigPage .jc-hero{display:block;width:100%;max-width:960px;aspect-ratio:16/9;max-height:320px;object-fit:cover;object-position:50% 58%;border-radius:14px;margin:.5em 0 1.2em;box-shadow:0 10px 30px rgba(0,0,0,.45)}
+  #jcConfigPage .jc-section{margin:0 0 2.2em;padding:1.2em 1.4em;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}
+  #jcConfigPage .jc-section h3{margin:0 0 .3em;font-size:1.25em}
+  #jcConfigPage .jc-section > p.jc-lead{margin:0 0 1.2em;opacity:.75}
+  #jcConfigPage .jc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(16em,1fr));gap:0 1.6em}
+  #jcConfigPage .jc-color{display:flex;align-items:center;gap:.8em;margin-bottom:1em}
+  #jcConfigPage .jc-color input[type=color]{width:3em;height:2.2em;border:0;background:none;padding:0;cursor:pointer}
+  #jcConfigPage .jc-days{display:flex;flex-wrap:wrap;gap:.2em 1.6em;margin-bottom:1.2em}
+  #jcConfigPage .jc-days .checkboxContainer{display:inline-flex;width:auto;margin:0}
+  #jcConfigPage textarea{width:100%;box-sizing:border-box;background:rgba(0,0,0,.25);color:inherit;border:1px solid rgba(255,255,255,.15);border-radius:6px;padding:.6em .8em;font:inherit}
+  #jcConfigPage textarea.jc-json{font-family:Consolas,'Courier New',monospace;font-size:.9em;min-height:16em;width:100%;box-sizing:border-box}
+  #jcConfigPage .jc-note{opacity:.7;font-size:.9em}
+  #jcConfigPage .jc-error{color:#ff6b6b}
+  #jcConfigPage .jc-ok{color:#5bd47a}
+  #jcConfigPage .jc-tvapp{display:flex;flex-wrap:wrap;align-items:center;gap:1em 1.4em;margin:0 0 1em;padding:1.1em 1.3em;border:2px solid var(--accentColor,#e0262b);border-radius:12px;background:linear-gradient(135deg,rgba(224,38,43,.22),rgba(224,38,43,.06))}
+  #jcConfigPage .jc-tvapp-icon{font-size:2.6em;line-height:1}
+  #jcConfigPage .jc-tvapp-text{display:flex;flex-direction:column;gap:.3em;flex:1 1 18em}
+  #jcConfigPage .jc-tvapp-text strong{font-size:1.15em}
+  #jcConfigPage .jc-tvapp-text span{opacity:.85}
+  #jcConfigPage .jc-tvapp-links{display:flex;flex-wrap:wrap;gap:.6em}
+  #jcConfigPage .jc-tvapp-links a{display:inline-block;padding:.6em 1.1em;border-radius:6px;font-weight:600;text-decoration:none;white-space:nowrap;transition:transform .15s,box-shadow .15s}
+  #jcConfigPage .jc-tvapp-play{background:var(--accentColor,#e0262b);color:#fff}
+  #jcConfigPage .jc-tvapp-gh{border:1px solid rgba(255,255,255,.35);color:inherit}
+  #jcConfigPage .jc-tvapp-links a:hover,#jcConfigPage .jc-tvapp-links a:focus-visible{transform:scale(1.05);box-shadow:0 0 0 3px rgba(224,38,43,.45);outline:none}
+  #jcConfigPage .jc-support{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.8em 1.2em;margin:0 0 1.5em;padding:1em 1.2em;border:1px solid rgba(224,38,43,.45);border-radius:10px;background:rgba(224,38,43,.08)}
+  #jcConfigPage .jc-support-text{display:flex;flex-direction:column;gap:.25em;flex:1 1 16em}
+  #jcConfigPage .jc-support-text span{opacity:.8;font-size:.92em}
+  #jcConfigPage .jc-support-btn{display:inline-block;padding:.6em 1.1em;border-radius:6px;background:var(--accentColor,#e0262b);color:#fff;font-weight:600;text-decoration:none;white-space:nowrap;transition:transform .15s,box-shadow .15s}
+  #jcConfigPage .jc-support-btn:hover,#jcConfigPage .jc-support-btn:focus-visible{transform:scale(1.05);box-shadow:0 0 0 3px rgba(224,38,43,.45);outline:none}
+  #jcConfigPage .jc-reset{margin-top:2.5em;padding-top:1.5em;border-top:1px solid rgba(255,255,255,.1)}
+  #jcConfigPage #jcResetConfirm{margin-top:1em}
+  #jcConfigPage #jcResetBtn{background:rgba(255,255,255,.08)!important;color:inherit!important;border:1px solid rgba(255,255,255,.15)}
+  #jcConfigPage #jcCheckResult{white-space:pre-wrap;margin-top:1em;font-family:Consolas,'Courier New',monospace;font-size:.9em}
+</style>
+<div data-role="content">
+<div class="content-primary">
+<div id="jcDuplicates" class="jc-error" style="display:none;padding:.8em 1em;margin:0 0 1em;border:1px solid #d95454;border-radius:8px"></div>
+<form id="jcConfigForm">
+
+  <img class="jc-hero" src="../JellyCinema/banner.jpg" alt="Jelly Cinema: popcorn on a Now Showing marquee" />
+  <div class="verticalSection">
+    <div class="sectionTitleContainer"><h2 class="sectionTitle">Jelly Cinema</h2></div>
+    <p class="jc-note">Not affiliated with the Jellyfin project. Changes apply after you save and refresh the browser.</p>
+  </div>
+
+  <div class="jc-tvapp">
+    <div class="jc-tvapp-icon" aria-hidden="true">&#128250;</div>
+    <div class="jc-tvapp-text">
+      <strong>Jelly Cinema on your TV</strong>
+      <span>This plugin changes Jellyfin in the browser. For the same look on Android TV and Google TV, get the Jelly Cinema TV app. It works with or without this plugin.</span>
+    </div>
+    <div class="jc-tvapp-links">
+      <a class="jc-tvapp-play" href="https://play.google.com/store/apps/details?id=com.techsystems23.jellycinema" target="_blank" rel="noopener noreferrer">Google Play (updates itself)</a>
+      <a class="jc-tvapp-gh" href="https://github.com/techsystems23-llc/jellycinema-tv" target="_blank" rel="noopener noreferrer">Free on GitHub</a>
+    </div>
+  </div>
+
+  <div class="jc-support">
+    <div class="jc-support-text">
+      <strong>Enjoying Jelly Cinema?</strong>
+      <span>It's free and always will be. If it makes movie night better, you can buy the developer a coffee.</span>
+    </div>
+    <a class="jc-support-btn" href="https://ko-fi.com/techsystems23" target="_blank" rel="noopener noreferrer">&#9749; Support the developer</a>
+  </div>
+
+  <div class="jc-section">
+    <h3>Branding</h3>
+    <p class="jc-lead">Your server's name and color, used across the home screen and sign-in page.</p>
+    <div class="jc-grid">
+      <div class="inputContainer"><input is="emby-input" type="text" id="BrandName" label="Server name" /><div class="fieldDescription">Shown in row titles such as "&lt;name&gt; Picks".</div></div>
+      <div class="inputContainer"><input is="emby-input" type="text" id="LogoPath" label="Logo file in Jellyfin's web folder (empty = built-in logo)" /></div>
+    </div>
+    <label class="checkboxContainer"><input is="emby-checkbox" type="checkbox" id="ReplaceIcons" /><span>Use the Jelly Cinema logo and icons (header logo, browser tab, phone home screen)</span></label>
+    <label class="checkboxContainer"><input is="emby-checkbox" type="checkbox" id="AccentEnabled" /><span>Use my accent color (off = keep the theme's color)</span></label>
+    <div class="jc-grid">
+      <div class="jc-color"><input type="color" id="AccentColor" /><span>Accent</span></div>
+      <div class="jc-color"><input type="color" id="AccentHover" /><span>Accent on hover</span></div>
+      <div class="jc-color"><input type="color" id="AccentFocus" /><span>Focus outline</span></div>
+      <div class="jc-color"><input type="color" id="AccentSave" /><span>Save buttons</span></div>
+    </div>
+  </div>
+
+  <div class="jc-section">
+    <h3>Sign-in screen</h3>
+    <p class="jc-lead">A full-size card with your logo over the splash image.</p>
+    <label class="checkboxContainer"><input is="emby-checkbox" type="checkbox" id="SignInEnabled" /><span>Use the Jelly Cinema sign-in screen</span></label>
+    <div class="jc-grid">
+      <div class="selectContainer"><select is="emby-select" id="DisclaimerMode" label="Message under the sign-in card">
+        <option value="custom">My text below</option>
+        <option value="jellyfin">Jellyfin's own Login disclaimer (Dashboard &gt; General)</option>
+        <option value="hide">No message</option>
+      </select></div>
+      <div class="inputContainer"><input is="emby-input" type="text" id="SignInCardWidth" label="Card width (e.g. 30rem)" /></div>
+      <div class="selectContainer"><select is="emby-select" id="SignInBackground" label="Background">
+        <option value="marquee">"Now Showing" theater marquee</option>
+        <option value="jellyfin">Jellyfin's own splash screen</option>
+        <option value="none">Plain</option>
+      </select></div>
+      <div class="inputContainer"><input is="emby-input" type="text" id="MarqueeTitle" label="Words on the marquee (empty = server name)" /></div>
+      <div class="inputContainer"><input is="emby-input" type="text" id="MarqueeTagline" label="Line under the marquee" /></div>
+    </div>
+    <div class="inputContainer"><label class="inputLabel" for="DisclaimerText">Message text</label><textarea id="DisclaimerText" rows="3"></textarea></div>
+  </div>
+
+  <div class="jc-section">
+    <h3>Hero banner</h3>
+    <p class="jc-lead">The big banner at the top of Home. Jelly Cinema draws it itself; if the Media Bar plugin is installed, Media Bar draws it instead and the "Jelly Cinema banner" settings below don't apply.</p>
+    <label class="checkboxContainer"><input is="emby-checkbox" type="checkbox" id="HeroEnabled" /><span>Show the Jelly Cinema banner (when Media Bar isn't installed)</span></label>
+    <div class="jc-grid">
+      <div class="selectContainer"><select is="emby-select" id="HeroTypes" label="Banner shows">
+        <option value="both">Movies and shows</option>
+        <option value="movies">Movies only</option>
+        <option value="shows">Shows only</option>
+      </select></div>
+      <div class="inputContainer"><input is="emby-input" type="text" id="HeroLibraries" label="Only these libraries (comma separated, empty = all)" /></div>
+      <div class="inputContainer"><input is="emby-input" type="number" min="1" max="100" id="HeroMaxItems" label="Titles in the banner" /></div>
+      <div class="inputContainer"><input is="emby-input" type="number" min="3" max="120" id="HeroSlideSeconds" label="Seconds per title (no trailer)" /></div>
+      <div class="inputContainer"><input is="emby-input" type="number" min="0" max="60" id="HeroTrailerDelaySeconds" label="Trailer starts after (seconds)" /></div>
+      <div class="inputContainer"><input is="emby-input" type="text" id="HeroHeight" label="Banner height (e.g. 88vh)" /></div>
+    </div>
+    <label class="checkboxContainer"><input is="emby-checkbox" type="checkbox" id="HeroTrailers" /><span>Play trailers in the banner (muted; YouTube trailers load from YouTube)</span></label>
+    <label class="checkboxContainer"><input is="emby-checkbox" type="checkbox" id="HeroSkipWatched" /><span>Leave out titles the viewer has already watched</span></label>
+    <p class="fieldDescription">Every viewer only sees titles from libraries they can open and within their rating limits.</p>
+    <label class="checkboxContainer"><input is="emby-checkbox" type="checkbox" id="AutoAdvance" /><span>Move to the next title automatically</span></label>
+    <label class="checkboxContainer"><input is="emby-checkbox" type="checkbox" id="PinBanner" /><span>Keep the banner on screen while scrolling</span></label>
+    <label class="checkboxContainer"><input is="emby-checkbox" type="checkbox" id="FollowSelection" /><span>Banner follows the highlighted card</span></label>
+    <label class="checkboxContainer"><input is="emby-checkbox" type="checkbox" id="TrailerFallback" /><span>Skip trailers that won't play</span></label>
+    <div class="jc-grid">
+      <div class="inputContainer"><input is="emby-input" type="number" min="5" max="600" id="TrailerMaxSeconds" label="Longest trailer before moving on (seconds)" /></div>
+      <div class="selectContainer"><select is="emby-select" id="PinStyle" label="Pinned style">
+        <option value="tv">TV: banner top stays, rows scroll under it</option>
+        <option value="fade">Fade: banner text fades behind the rows</option>
+      </select></div>
+      <div class="inputContainer"><input is="emby-input" type="text" id="PinHeight" label="Pinned banner height (e.g. 58vh)" /></div>
+      <div class="inputContainer"><input is="emby-input" type="number" min="0" max="10000" id="HoverDelayMs" label="Hover delay (ms)" /></div>
+      <div class="inputContainer"><input is="emby-input" type="number" min="0" max="10000" id="FocusDelayMs" label="Remote/keyboard delay (ms)" /></div>
+      <div class="inputContainer"><input is="emby-input" type="number" min="5" max="3600" id="PreviewTimeoutSeconds" label="Highlighted title stays for (seconds)" /></div>
+    </div>
+  </div>
+
+  <div class="jc-section">
+    <h3>Theater Mode</h3>
+    <p class="jc-lead">When nobody touches Home for a while, the banner and its trailer fill the screen. The first key press only wakes it.</p>
+    <label class="checkboxContainer"><input is="emby-checkbox" type="checkbox" id="TheaterMode" /><span>Turn on Theater Mode</span></label>
+    <div class="inputContainer"><input is="emby-input" type="number" min="10" max="3600" id="TheaterIdleSeconds" label="Start after (seconds idle)" /></div>
+  </div>
+
+  <div class="jc-section">
+    <h3>Top 10</h3>
+    <p class="jc-lead">Numbered rows of the most-watched movies and shows. Each person only sees titles they're allowed to open.</p>
+    <label class="checkboxContainer"><input is="emby-checkbox" type="checkbox" id="Top10Enabled" /><span>Show Top 10 rows</span></label>
+    <label class="checkboxContainer"><input is="emby-checkbox" type="checkbox" id="Top10Movies" /><span>Movies row</span></label>
+    <label class="checkboxContainer"><input is="emby-checkbox" type="checkbox" id="Top10Shows" /><span>Shows row</span></label>
+    <label class="checkboxContainer"><input is="emby-checkbox" type="checkbox" id="Top10FillFromLibrary" /><span>Fill short rows with the viewer's best-rated titles</span></label>
+    <div class="jc-grid">
+      <div class="inputContainer"><input is="emby-input" type="text" id="Top10MoviesTitle" label="Movies row title" /></div>
+      <div class="inputContainer"><input is="emby-input" type="text" id="Top10ShowsTitle" label="Shows row title" /></div>
+      <div class="inputContainer"><input is="emby-input" type="number" min="1" max="10" id="Top10MinTitles" label="Hide a row with fewer than" /></div>
+      <div class="inputContainer"><input is="emby-input" type="number" min="1" max="60" id="Top10RefreshDays" label="Re-rank every (days)" /></div>
+      <div class="inputContainer"><input is="emby-input" type="number" min="10" max="200" id="Top10Keep" label="Titles kept in the ranking" /></div>
+      <div class="inputContainer"><input is="emby-input" type="number" min="0" max="3600" id="Top10MinPlaySeconds" label="Shortest play that counts (seconds)" /></div>
+    </div>
+  </div>
+
+  <div class="jc-section">
+    <h3>Picks</h3>
+    <p class="jc-lead">A weekly row of well-rated family movies the viewer hasn't watched.</p>
+    <label class="checkboxContainer"><input is="emby-checkbox" type="checkbox" id="PicksEnabled" /><span>Show the Picks row</span></label>
+    <label class="checkboxContainer"><input is="emby-checkbox" type="checkbox" id="PicksUnwatchedOnly" /><span>Only movies the viewer hasn't watched</span></label>
+    <div class="fieldDescription" style="margin:.6em 0 .3em">Show on</div>
+    <div class="jc-days" id="PicksDaysBoxes"></div>
+    <div class="jc-grid">
+      <div class="inputContainer"><input is="emby-input" type="text" id="PicksTitle" label="Row title (empty = &quot;&lt;server name&gt; Picks&quot;)" /></div>
+      <div class="inputContainer"><input is="emby-input" type="number" min="3" max="30" id="PicksCount" label="Number of movies" /></div>
+      <div class="inputContainer"><input is="emby-input" type="text" id="PicksRatings" label="Allowed ratings (comma-separated)" /></div>
+      <div class="inputContainer"><input is="emby-input" type="text" id="PicksMaxRating" label="Highest rating" /></div>
+      <div class="inputContainer"><input is="emby-input" type="number" min="0" max="10" step="0.1" id="PicksMinScore" label="Lowest community score" /></div>
+    </div>
+  </div>
+
+  <div class="jc-section">
+    <h3>Rows</h3>
+    <label class="checkboxContainer"><input is="emby-checkbox" type="checkbox" id="RowArrows" /><span>Left/right arrows on every row</span></label>
+    <label class="checkboxContainer"><input is="emby-checkbox" type="checkbox" id="KeyboardNav" /><span>Arrow keys move between cards and rows</span></label>
+    <label class="checkboxContainer"><input is="emby-checkbox" type="checkbox" id="ReplaceDuplicateGenres" /><span>Replace repeated genre rows</span></label>
+    <div class="inputContainer"><input is="emby-input" type="number" min="0" max="3650" id="ContinueWatchingHideAfterDays" label="Hide Continue Watching items untouched for (days, 0 = never)" /></div>
+    <label class="checkboxContainer"><input is="emby-checkbox" type="checkbox" id="TvCardSizes" /><span>Size home posters like the Jelly Cinema TV app (off = Jellyfin's sizes)</span></label>
+    <h4>Discover rows</h4>
+    <div class="selectContainer"><select is="emby-select" id="DiscoverRows" label="Because You Watched, genre, Collections and Watch Again rows">
+      <option value="auto">On, unless the Home Screen Sections plugin already makes them</option>
+      <option value="on">Always on</option>
+      <option value="off">Off</option>
+    </select></div>
+    <div class="inputContainer"><input is="emby-input" type="number" min="0" max="6" id="BecauseYouWatchedRows" label="&quot;Because You Watched&quot; rows (0 = none)" /></div>
+    <div class="inputContainer"><input is="emby-input" type="number" min="0" max="12" id="GenreRows" label="Genre rows (the genres each viewer watches most; 0 = none)" /></div>
+    <label class="checkboxContainer"><input is="emby-checkbox" type="checkbox" id="CollectionsRow" /><span>Collections row (never shown to accounts with a rating limit)</span></label>
+    <label class="checkboxContainer"><input is="emby-checkbox" type="checkbox" id="WatchAgainRow" /><span>Watch Again row</span></label>
+  </div>
+
+  <div class="jc-section">
+    <h3>Seasonal themes</h3>
+    <p class="jc-lead">Holiday overlays (snow, leaves, hearts and more) and themed movie rows by date.</p>
+    <label class="checkboxContainer"><input is="emby-checkbox" type="checkbox" id="SeasonsEnabled" /><span>Turn on seasonal themes</span></label>
+    <label class="checkboxContainer"><input is="emby-checkbox" type="checkbox" id="SeasonEffects" /><span>Show falling effects (always off on reduce-motion devices)</span></label>
+    <label class="checkboxContainer"><input is="emby-checkbox" type="checkbox" id="AutoLibraryRows" /><span>Christmas season: give a library that is mostly Christmas titles its own "&lt;Library&gt; Christmas" row</span></label>
+    <div class="inputContainer"><input is="emby-input" type="number" min="1" max="100" id="LibraryRowSharePercent" label="...when at least this percent of the library's movies/shows are Christmas titles" /></div>
+    <div class="inputContainer"><input is="emby-input" type="number" min="1" max="1000" id="LibraryRowMin" label="...and at least this many of them" /></div>
+    <div class="inputContainer">
+      <label class="inputLabel" for="SeasonsJson">Advanced: calendar, themed rows and library rows (JSON)</label><textarea class="jc-json" id="SeasonsJson" spellcheck="false"></textarea>
+      <div class="fieldDescription">Leave out "calendar" to use the built-in 13-theme calendar. Dates: "MM-DD", "easter" or "thanksgiving", with optional offsets like "easter-7".</div>
+      <div id="jcSeasonsMsg" class="fieldDescription"></div>
+    </div>
+  </div>
+
+  <div class="jc-section">
+    <h3>Permission check</h3>
+    <p class="jc-lead">Builds the Top 10, Picks and seasonal rows for every user and confirms each title is one that user is allowed to open.</p>
+    <button is="emby-button" type="button" id="jcRunCheck" class="raised"><span>Run permission check</span></button>
+    <div id="jcCheckResult"></div>
+  </div>
+
+  <label class="checkboxContainer"><input is="emby-checkbox" type="checkbox" id="InjectScripts" /><span>Load Jelly Cinema on the web interface (turn off to pause everything)</span></label>
+  <label class="checkboxContainer"><input is="emby-checkbox" type="checkbox" id="AutoReload" /><span>After a Jelly Cinema update, open browsers reload once by themselves</span></label>
+  <div>
+    <button is="emby-button" type="submit" class="raised button-submit block"><span>Save</span></button>
+  </div>
+  <div class="jc-reset">
+    <button is="emby-button" type="button" id="jcResetBtn" class="raised block"><span>Reset to Default</span></button>
+    <div id="jcResetConfirm" class="jc-section" hidden>
+      <p style="margin-top:0">This puts <b>every</b> Jelly Cinema setting back to how it came out of the box, including the server name, colors, sign-in message and seasonal rows. Your libraries, users and movies are not touched.</p>
+      <div style="display:flex;gap:1em;flex-wrap:wrap">
+        <button is="emby-button" type="button" id="jcResetYes" class="raised button-delete"><span>Yes, reset everything</span></button>
+        <button is="emby-button" type="button" id="jcResetNo" class="raised"><span>Cancel</span></button>
+      </div>
+    </div>
+    <div id="jcResetMsg" class="fieldDescription"></div>
+  </div>
+</form>
+</div>
+</div>
+
+<script type="text/javascript">
+(function () {
+  var pluginId = '9cd3e1ec-177d-47d7-8b07-7ec96b361d2d';
+  var page = document.querySelector('#jcConfigPage');
+  var DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  var boxes = page.querySelector('#PicksDaysBoxes');
+  if (!boxes.children.length) {
+    DAYS.forEach(function (d, i) {
+      var l = document.createElement('label'); l.className = 'checkboxContainer';
+      var cb = document.createElement('input'); cb.type = 'checkbox'; cb.setAttribute('is', 'emby-checkbox'); cb.setAttribute('data-day', String(i));
+      var s = document.createElement('span'); s.textContent = d;
+      l.appendChild(cb); l.appendChild(s); boxes.appendChild(l);
+    });
+  }
+  function fields() { return page.querySelectorAll('#jcConfigForm [id]:not(#PicksDaysBoxes):not(#jcRunCheck):not(#jcCheckResult):not(#jcSeasonsMsg):not(#jcConfigForm)'); }
+
+  function load() {
+    Dashboard.showLoadingMsg();
+    ApiClient.getPluginConfiguration(pluginId).then(function (cfg) {
+      fields().forEach(function (el) {
+        if (!(el.id in cfg)) return;
+        if (el.type === 'checkbox') el.checked = !!cfg[el.id];
+        else el.value = cfg[el.id] == null ? '' : cfg[el.id];
+      });
+      var days = String(cfg.PicksDays || '').split(',').map(function (x) { return x.trim(); });
+      boxes.querySelectorAll('[data-day]').forEach(function (cb) { cb.checked = days.indexOf(cb.getAttribute('data-day')) >= 0; });
+      Dashboard.hideLoadingMsg();
+      showStatus();
+    });
+  }
+
+  function showStatus() {
+    ApiClient.getJSON(ApiClient.getUrl('JellyCinema/status')).then(function (s) {
+      var m = page.querySelector('#jcSeasonsMsg');
+      m.className = 'fieldDescription ' + (s.SeasonsError ? 'jc-error' : 'jc-ok');
+      m.textContent = s.SeasonsError ? s.SeasonsError + ' The built-in seasonal defaults are used until this is fixed.' : 'Seasonal settings are valid.';
+      var dup = page.querySelector('#jcDuplicates');
+      if (dup) {
+        var others = s.OtherCopies || [];
+        dup.style.display = others.length ? '' : 'none';
+        dup.textContent = others.length ? 'More than one copy of Jelly Cinema is installed (this is ' + s.Version + '; also ' + others.join(', ') +
+          '). Only the newest one runs. Remove the other "Jelly Cinema_" folders from Jellyfin\'s plugins folder and restart Jellyfin.' : '';
+      }
+    }).catch(function () {});
+  }
+
+  page.querySelector('#jcConfigForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var json = page.querySelector('#SeasonsJson').value.trim();
+    if (json) { try { JSON.parse(json); } catch (err) { Dashboard.alert('The seasonal settings are not valid JSON: ' + err.message); return false; } }
+    Dashboard.showLoadingMsg();
+    ApiClient.getPluginConfiguration(pluginId).then(function (cfg) {
+      fields().forEach(function (el) {
+        if (!(el.id in cfg)) return;
+        if (el.type === 'checkbox') cfg[el.id] = el.checked;
+        else if (el.type === 'number') { var n = parseFloat(el.value); if (!isNaN(n)) cfg[el.id] = n; }
+        else cfg[el.id] = el.value;
+      });
+      var d = []; boxes.querySelectorAll('[data-day]').forEach(function (cb) { if (cb.checked) d.push(cb.getAttribute('data-day')); });
+      cfg.PicksDays = d.join(',');
+      return ApiClient.updatePluginConfiguration(pluginId, cfg);
+    }).then(function (r) { Dashboard.processPluginConfigurationUpdateResult(r); showStatus(); });
+    return false;
+  });
+
+  page.querySelector('#jcRunCheck').addEventListener('click', function () {
+    var out = page.querySelector('#jcCheckResult');
+    if (!window.JellyCinema || !window.JellyCinema.checkAllUsers) { out.textContent = 'Jelly Cinema isn\'t loaded in this browser yet. Save, refresh the page (Ctrl+Shift+R) and try again.'; return; }
+    out.className = ''; out.textContent = 'Checking every user... this can take a minute.';
+    window.JellyCinema.checkAllUsers().then(function (r) {
+      if (r.error) { out.textContent = r.error; return; }
+      var lines = [r.leaks === 0 ? 'No problems: every title shown is one that user may open.' : r.leaks + ' title(s) shown to someone who may not open them:'];
+      r.report.forEach(function (u) {
+        lines.push(u.user + ': ' + u.titlesChecked + ' titles checked, ' + (u.leaks.length ? u.leaks.length + ' NOT allowed' : 'all allowed'));
+        u.leaks.forEach(function (l) { lines.push('    ' + l.title + '  (' + l.row + ')'); });
+      });
+      out.className = r.leaks === 0 ? 'jc-ok' : 'jc-error';
+      out.textContent = lines.join('\n');
+    }).catch(function (e) { out.textContent = 'The check failed: ' + (e && e.message || e); });
+  });
+
+  var resetBox = page.querySelector('#jcResetConfirm'), resetMsg = page.querySelector('#jcResetMsg');
+  page.querySelector('#jcResetBtn').addEventListener('click', function () { resetBox.hidden = false; resetMsg.textContent = ''; });
+  page.querySelector('#jcResetNo').addEventListener('click', function () { resetBox.hidden = true; });
+  page.querySelector('#jcResetYes').addEventListener('click', function () {
+    resetBox.hidden = true;
+    Dashboard.showLoadingMsg();
+    ApiClient.ajax({ type: 'POST', url: ApiClient.getUrl('JellyCinema/reset') }).then(function () {
+      load();
+      resetMsg.className = 'fieldDescription jc-ok';
+      resetMsg.textContent = 'All settings are back to the defaults. Refresh the browser (Ctrl+Shift+R) to see the change.';
+    }, function () {
+      Dashboard.hideLoadingMsg();
+      resetMsg.className = 'fieldDescription jc-error';
+      resetMsg.textContent = 'The reset did not go through. Your settings were not changed.';
+    });
+  });
+
+  page.addEventListener('pageshow', load);
+})();
+</script>
+</div>
+</body>
+</html>

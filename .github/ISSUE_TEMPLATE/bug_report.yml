@@ -1,0 +1,42 @@
+name: Bug report
+description: Something in Jelly Cinema isn't working
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you expect, and what happened instead? Screenshots help a lot.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: "1. Open Home\n2. Scroll to ...\n3. ..."
+  - type: input
+    id: jc
+    attributes:
+      label: Jelly Cinema version
+      description: Dashboard → Plugins → Jelly Cinema
+    validations:
+      required: true
+  - type: input
+    id: jf
+    attributes:
+      label: Jellyfin version
+    validations:
+      required: true
+  - type: input
+    id: client
+    attributes:
+      label: Browser or device
+      placeholder: Chrome on Windows, Safari on iPhone, Android TV ...
+  - type: textarea
+    id: plugins
+    attributes:
+      label: Other plugins and themes
+      description: For example Media Bar, Home Screen Sections or a custom CSS theme.
+  - type: markdown
+    attributes:
+      value: "**Security problems** (someone seeing titles they shouldn't): please don't post them here. See SECURITY.md."
